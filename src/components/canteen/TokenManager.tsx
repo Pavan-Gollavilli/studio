@@ -36,6 +36,7 @@ import {
   X,
 } from 'lucide-react';
 import TokenForm from './TokenForm';
+import TokenDisplayDialog from './TokenDisplayDialog';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -54,6 +55,7 @@ export default function TokenManager() {
   const [filterStatus, setFilterStatus] = useState<TokenStatus | 'all'>('all');
   const [hydrated, setHydrated] = useState(false);
   const { toast } = useToast();
+  const [lastGeneratedToken, setLastGeneratedToken] = useState<Token | null>(null);
 
   useEffect(() => {
     setHydrated(true);
@@ -67,6 +69,7 @@ export default function TokenManager() {
       createdAt: new Date(),
     };
     setTokens((prev) => [newToken, ...prev]);
+    setLastGeneratedToken(newToken);
     toast({
       title: 'Token Generated',
       description: `Token for ${newToken.itemName} has been created.`,
@@ -127,6 +130,15 @@ export default function TokenManager() {
       </div>
       
       <TokenForm addToken={addToken} />
+
+      <TokenDisplayDialog 
+        token={lastGeneratedToken} 
+        onOpenChange={(isOpen) => {
+          if(!isOpen) {
+            setLastGeneratedToken(null)
+          }
+        }}
+      />
 
       <Card>
         <CardHeader>
